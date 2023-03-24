@@ -1,0 +1,48 @@
+
+
+<div class="container" align="center">
+  <h2 class="mt-2 ml-5 d-inline-block align-bottom text-success">Mantenimiento de pokemons</h2>
+</div>
+
+<div class=" d-flex justify-content-center">
+  <a href="/create-pokemon" class="btn btn-primary btn-lg btn-block mt-2">Crear pokemon</a>
+</div>
+
+{{#if hasPokemons}}
+<div class="cards-wrapper ">
+
+  <div class="row row-cols-4">
+
+    {{#each pokemons as |pk|}}
+    <div class="card zoom" style="width: 18rem;background-color: #C7DBD2">
+      <h4 class="card-title mt-2" align="center"> <strong>{{pk.Id}}</strong> {{pk.name}}</h4>
+      <img class="card-img-top " src={{pk.imgUrl}} alt="Card image cap">
+      <div class="card-body">
+        <p class="card-text"> {{pk.description}}
+          <br />
+          <strong>Tipo: </strong> {{pk.Tipo.dataValues.name}}
+          <br />
+          <strong>Region: </strong> {{pk.Region.dataValues.name}}
+          <hr />
+        <div class="row row-cols-2 ">
+          <a href="/edit-pokemon/{{pk.Id}}?edit=true" class="btn btn-success">
+            <i class="fa-solid fa-edit"></i> Editar
+          </a>
+
+             <form class="form-inline"  action="/confirm-delete-pokemon" method="post">
+            <input type="hidden" name="pokeId" value="{{pk.Id}}" />
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+
+{{else}}
+<h3 class="text-center mt-4">No hay pokemones creados</h3>
+
+{{/if}}

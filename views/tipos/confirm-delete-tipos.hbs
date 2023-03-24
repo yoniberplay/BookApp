@@ -1,0 +1,21 @@
+
+<div class="row" >
+    <div class="col-6 offset-3">
+        <div class="card">
+            <div class="card-header bg-dark text-light">
+                <h4 >Esta seguro que desea eliminar el tipo {{tipo.name}}?</h4>
+            </div>
+            <div class="card-body" style="background-color: #C7DBD2">
+                 <form class="form-inline" action="/delete-tipos" method="post">
+
+                   <input type="hidden" name="tipoId" value="{{tipo.Id}}" />
+
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa-solid fa-trash"></i> Si</button>
+                    <a href="/tipos" class="btn btn-success">
+                        <i class="fa-solid fa-cancel"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

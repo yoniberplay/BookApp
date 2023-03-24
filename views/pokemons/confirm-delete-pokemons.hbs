@@ -1,0 +1,36 @@
+{{!-- <div class="card col-md-3 bg-dark">
+    <div class="card-body">
+        <p class="lead text-muted">Esta seguro que desea eliminar el pokemon</p>
+        <h5 class="card-title">{{poke.name}}</h5>
+        <form class="form-inline" action="/delete-pokemon" method="post">
+            <input type="hidden" name="pokemonId" value="{{poke.Id}}" />
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="/pokemon" type="button" class="btn btn-warning">volver atras</a>
+
+        </form>
+    </div>
+</div> --}}
+
+
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card">
+            <div class="card-header bg-dark text-light">
+                <h4 >Esta seguro que desea eliminar el Pokemon {{poke.name}}?</h4>
+            </div>
+            <div class="card-body" style="background-color: #C7DBD2">
+                <form method="post" action="/delete-pokemon" >                 
+
+                   <input type="hidden" name="pokemonId" value="{{poke.Id}}" />
+
+                     <div class="container justify-content-center">
+                    <button type="submit" class="btn btn-danger  ">
+                        <i class="fa-solid fa-trash"></i> Si</button>
+                    <a href="/pokemon" class="btn btn-success ">
+                        <i class="fa-solid fa-cancel"></i> Cancelar</a>
+                         </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
