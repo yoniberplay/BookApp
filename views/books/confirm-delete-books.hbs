@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card">
+            <div class="card-header bg-dark text-light">
+                <h4 >Esta seguro que desea eliminar el libro {{book.title}}?</h4>
+            </div>
+            <div class="card-body" style="background-color: #C7DBD2">
+                <form method="post" action="/delete-book" >                 
+
+                   <input type="hidden" name="bookId" value="{{book.Id}}" />
+
+                     <div class="container justify-content-center">
+                    <button type="submit" class="btn btn-danger  ">
+                        <i class="fa-solid fa-trash"></i> Si</button>
+                    <a href="/book" class="btn btn-success ">
+                        <i class="fa-solid fa-cancel"></i> Cancelar</a>
+                         </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,17 +2,17 @@ const Category = require("../models/Category");
 const Author = require("../models/Author");
 const Editorial = require("../models/Editorial");
 const Books = require("../models/Book");
+const transporter = require("../services/EmailService");
 
 exports.GetBooksListHome = (req, res, next) => {
   const myData = req.query.data;
   if (myData) {
     const params = JSON.parse(req.query.data);
-    console.log(myData);
     res.render("books/home", {
       pageTitle: "BookApp",
       books: params.books,
       hasBooks: params.books.length > 0,
-      Categorys: params.Regions,
+      Category: params.Category,
       Author: params.Author,
       Editorial: params.Editorial,
     });
@@ -57,6 +57,32 @@ exports.GetBooksListHome = (req, res, next) => {
   }
 };
 
+exports.GetBooksList = (req, res, next) => {
+  Books.findAll({ include: [{ all: true, nested: true }] })
+    .then((result) => {
+      let books = result.map((result) => result.dataValues);
+      books = result.map((restem) => {
+        let temp = { ...restem.dataValues };
+        temp.Category = restem.Category.dataValues;
+        temp.Author = restem.Author.dataValues;
+        temp.Editorial = restem.Editorial.dataValues;
+        return temp;
+      });
+      res.render("books/books-list", {
+        pageTitle: "books",
+        MantBook: true,
+        books: books,
+        hasBooks: books.length > 0,
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
 exports.GetCreateBook = (req, res, next) => {
   let categorysViewModel;
   let authorViewModel;
@@ -90,45 +116,33 @@ exports.GetCreateBook = (req, res, next) => {
     });
 };
 
-exports.GetBooksList = (req, res, next) => {
-  Books.findAll({ include: [{ all: true, nested: true }] })
-    .then((result) => {
-      const books = result.map((result) => result.dataValues);
-      res.render("books/books-list", {
-        pageTitle: "books",
-        MantBook: true,
-        books: books,
-        hasBooks: books.length > 0,
-      });
-    })
-    .catch((err) => {
-      res.render("Error/ErrorInterno", {
-        pageTitle: "Error Interno",
-        mensaje: err,
-      });
-    });
-};
-
 exports.PostCreateBooks = (req, res, next) => {
   const title = req.body.title;
   const publicationYear = req.body.publicationYear;
-  const img = req.body.img;
+  const img = req.file;
   const author = req.body.AuthorId;
   const category = req.body.CategoryId;
   const editorial = req.body.EditorialId;
 
-  console.log(title);
-
   Books.create({
     title: title,
     publicationYear: publicationYear,
-    img: img,
+    img: "/" + img.path, // images/image.jpg,
     AuthorId: author,
     CategoryId: category,
     EditorialId: editorial,
   })
     .then((result) => {
-      res.redirect("/book");
+      Author.findOne({ where: { id: author } }).then((result) => {
+        const aut = result.dataValues;
+        res.redirect("/book");
+        return transporter.sendMail({
+          from: "BookApp notifications",
+          to: aut.email,
+          subject: `Publicacion de libro`,
+          html: `Saludos, ${aut.name} ha sido publicado su libro titulado ${title}.`,
+        });
+      });
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {
@@ -189,25 +203,36 @@ exports.GetEditBooks = (req, res, next) => {
 exports.PostEditBooks = (req, res, next) => {
   const title = req.body.title;
   const publicationYear = req.body.publicationYear;
-  const img = req.body.img;
+  const img = req.file;
   const author = req.body.AuthorId;
   const category = req.body.CategoryId;
   const editorial = req.body.EditorialId;
   const bookId = req.body.bookId;
 
-  Books.update(
-    {
-        title: title,
-        publicationYear: publicationYear,
-        img: img,
-        AuthorId: author,
-        CategoryId: category,
-        EditorialId: editorial,
-    },
-    { where: { id: bookId } }
-  )
+  Books.findOne({ where: { id: bookId } })
     .then((result) => {
-      return res.redirect("/book");
+      const bk = result.dataValues;
+      if (!bk) {
+        return res.redirect("/");
+      }
+      const imagePath = img ? "/" + img.path : bk.img; // operador ternario
+      Books.update(
+        {
+          title: title,
+          publicationYear: publicationYear,
+          img: imagePath,
+          AuthorId: author,
+          CategoryId: category,
+          EditorialId: editorial,
+        },
+        { where: { id: bookId } }
+      )
+        .then((result) => {
+          return res.redirect("/book");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {
@@ -219,7 +244,7 @@ exports.PostEditBooks = (req, res, next) => {
 
 exports.PostConfirmDeleteBooks = (req, res, next) => {
   const bookId = req.body.bookId;
-  console.log(bookId);
+  // console.log(bookId);
 
   Books.findOne({ where: { id: bookId } })
     .then((result) => {
@@ -257,72 +282,108 @@ exports.PostDeleteBooks = (req, res, next) => {
     });
 };
 
-// exports.GetPokemonbyregion = (req, res, next) => {
-//   const regionId = req.params.regionId;
-//   let regionsViewModel;
-//   let TipoViewModel;
-//   let pokemons;
-//   Pokemons.findAll({
-//     where: { regionId: regionId },
-//     include: [{ all: true, nested: true }],
-//   })
-//     .then((result) => {
-//       pokemons = result.map((result) => result.dataValues);
-//       Regions.findAll().then((result) => {
-//         regionsViewModel = result.map((result) => result.dataValues);
-//         Tipo.findAll().then((result) => {
-//           TipoViewModel = result.map((result) => result.dataValues);
-//           res.redirect(
-//             `/?data=${JSON.stringify({
-//               pageTitle: "Pokemons",
-//               pokemons: pokemons,
-//               hasPokemons: pokemons.length > 0,
-//               Regions: regionsViewModel,
-//               Tipos: TipoViewModel,
-//             })}`
-//           );
-//         });
-//       });
-//     })
-//     .catch((err) => {
-//       res.render("Error/ErrorInterno", {
-//         pageTitle: "Error Interno",
-//         mensaje: err,
-//       });
-//     });
-// };
+exports.GetDetailBooks = (req, res, next) => {
+  const bookId = req.params.bookId;
 
-// exports.PostPokemonbyName = (req, res, next) => {
-//   const Name = req.body.Name;
-//   let regionsViewModel;
-//   let TipoViewModel;
-//   let pokemons;
-//   Pokemons.findAll({ include: [{ all: true, nested: true }] })
-//     .then((result) => {
-//       pokemons = result.map((result) => result.dataValues);
-//       pokemons = pokemons.filter((result) => {
-//         return result.name.toLowerCase() === Name.toLowerCase();
-//       });
-//       Regions.findAll().then((result) => {
-//         regionsViewModel = result.map((result) => result.dataValues);
-//         Tipo.findAll().then((result) => {
-//           TipoViewModel = result.map((result) => result.dataValues);
-//           res.redirect(
-//             `/?data=${JSON.stringify({
-//               pageTitle: "Pokemons",
-//               pokemons: pokemons,
-//               hasPokemons: pokemons.length > 0,
-//               Regions: regionsViewModel,
-//               Tipos: TipoViewModel,
-//             })}`
-//           );
-//         });
-//       });
-//     })
-//     .catch((err) => {
-//       res.render("Error/ErrorInterno", {
-//         pageTitle: "Error Interno",
-//         mensaje: err,
-//       });
-//     });
-// };
+  Books.findOne({
+    where: { Id: bookId },
+    include: [{ all: true, nested: true }],
+  })
+    .then((result) => {
+      let book = result.dataValues;
+      if (!book) {
+        return res.redirect("/book");
+      }
+      let temp = { ...book };
+      temp.Category = book.Category.dataValues;
+      temp.Author = book.Author.dataValues;
+      temp.Editorial = book.Editorial.dataValues;
+      // console.log(temp);
+      res.render("books/details-books", {
+        pageTitle: "Detalles Libro",
+        book: temp,
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostBookbyName = (req, res, next) => {
+  const title = req.body.title;
+  let categoryViewModel;
+  let authorViewModel;
+  let editorialViewModel;
+  let books;
+  Books.findAll({ include: [{ all: true, nested: true }] })
+    .then((result) => {
+      books = result.map((result) => result.dataValues);
+      books = books.filter((result) => {
+        return result.title.toLowerCase() === title.toLowerCase();
+      });
+      Category.findAll().then((result) => {
+        categoryViewModel = result.map((result) => result.dataValues);
+        Author.findAll().then((result) => {
+          authorViewModel = result.map((result) => result.dataValues);
+          Editorial.findAll().then((result) => {
+            editorialViewModel = result.map((result) => result.dataValues);
+            res.redirect(
+              `/?data=${JSON.stringify({
+                books: books,
+                Category: categoryViewModel,
+                Author: authorViewModel,
+                Editorial: editorialViewModel,
+              })}`
+            );
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.Postfiltroporcategoria = (req, res, next) => {
+  const keys = Object.keys(req.body);
+  let categoryViewModel;
+  let authorViewModel;
+  let editorialViewModel;
+  let books;
+  Books.findAll({ include: [{ all: true, nested: true }] })
+    .then((result) => {
+      books = result.map((result) => result.dataValues);
+      books = books.filter((result) => {
+        return keys.includes(result.Category.name);
+      });
+      Category.findAll().then((result) => {
+        categoryViewModel = result.map((result) => result.dataValues);
+        Author.findAll().then((result) => {
+          authorViewModel = result.map((result) => result.dataValues);
+          Editorial.findAll().then((result) => {
+            editorialViewModel = result.map((result) => result.dataValues);
+            res.redirect(
+              `/?data=${JSON.stringify({
+                books: books,
+                Category: categoryViewModel,
+                Author: authorViewModel,
+                Editorial: editorialViewModel,
+              })}`
+            );
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};

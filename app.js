@@ -6,7 +6,7 @@ const connection = require("./context/AppContext");
 const compareHelpers = require('./util/helpers/hbs/compare')
 const Editorial = require("./models/Editorial");
 const Category = require("./models/Category");
-// const Books = require("./models/Book");
+const Books = require("./models/Book");
 const Author = require("./models/Author");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
@@ -48,23 +48,23 @@ const imageStorage = multer.diskStorage({
   },
 });
 
-app.use(multer({ storage: imageStorage }).single("Image"));
+app.use(multer({ storage: imageStorage }).single("img"));
 
 
 //? Mejor manejo de rutas
-// app.use(bookRoute);
+app.use(bookRoute);
 app.use(CategoryRoute);
 app.use(AuthorRoute);
 app.use(EditorialRoute);
 app.use("/", errorController.Get404);
 
 //? Relacion entre tablas
-// Books.belongsTo(Author, { constraint: true, onDelete: "CASCADE" });
-// Author.hasMany(Pokemons);
-// Books.belongsTo(Category, { constraint: true, onDelete: "CASCADE" });
-// Category.hasMany(Pokemons);
-// Books.belongsTo(Editorial, { constraint: true, onDelete: "CASCADE" });
-// Editorial.hasMany(Pokemons);
+Books.belongsTo(Author, { constraint: true, onDelete: "CASCADE" });
+Author.hasMany(Books);
+Books.belongsTo(Category, { constraint: true, onDelete: "CASCADE" });
+Category.hasMany(Books);
+Books.belongsTo(Editorial, { constraint: true, onDelete: "CASCADE" });
+Editorial.hasMany(Books);
 
 connection.sync()
   .then((result) => {

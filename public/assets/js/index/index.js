@@ -1,22 +1,36 @@
 $(document).ready(() => {
 
-  $("#btnpokemon").on('click',function(e){
-    e.preventDefault();
-    const RegionId = $('#region').val();
-    const TipoId = $('#Tipo').val();  
-
-    if (validarNumero(RegionId) && validarNumero(TipoId)) {
-      $("#pokemonForm").submit();
-    }else{
-      alert("Todos los campos son requeridos.");
+  $('#bookForm').submit(function(event) {
+    alert('Todos los campos son requeridos.');
+    if ($('#author').val() === 'Seleccione una opcion' || $('#cate').val() === 'Seleccione una opcion' || $('#editorial').val() === 'Seleccione una opcion' ) {
+      event.preventDefault();     
     }
   });
 
-  function validarNumero(valor) {
-    if (isNaN(valor) || valor === '') {
-      return false;
+  
+  const form = document.getElementById("filtroRegionesForm");
+  const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+
+  $("#btnfiltrocategoria").on("click", function (e) {
+    let checked = false;
+
+    for (let i = 0; i < checkboxes.length; i++) {
+      if (checkboxes[i].checked) {
+        checked = true;
+        break;
+      }
     }
-    return true;
-  }
+
+    if (!checked) {
+      e.preventDefault();
+      alert("Debe seleccionar al menos una categoria");
+    }
+  });
+
+  
+ 
+
+
+
 
 });

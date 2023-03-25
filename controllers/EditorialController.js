@@ -1,16 +1,29 @@
 const Editorial = require("../models/Editorial");
+const Books = require("../models/Book");
+
 
 exports.GetEditorialList = (req, res, next) => {
-  Editorial.findAll()
-    .then((result) => {
-      const editorials = result.map((result) => result.dataValues);
 
-      res.render("editorial/editorial-list", {
+    Books.findAll()
+    .then((result) => {
+      const libros =  result.map((result) => result.dataValues);
+      Editorial.findAll()
+      .then((result) => {
+        let editorials = result.map((result) => result.dataValues);
+        editorials = editorials.map((result) => {
+          let temp = {...result};
+          temp.quantityBooks = libros.filter((result) => {
+            return result.EditorialId == temp.Id;
+          }).length;
+          return temp;
+        });
+        res.render("editorial/editorial-list", {
         pageTitle: "Editorial",
         editorialActive: true,
         editorials: editorials,
         hasEditorials: editorials.length > 0,
-      });
+        });
+      })
     })
     .catch((err) => {
         res.render("Error/ErrorInterno", {

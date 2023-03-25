@@ -1,0 +1,47 @@
+<div class="container" align="center">
+  <h2 class="mt-2 ml-5 d-inline-block align-bottom text-success">Mantenimiento de Libros</h2>
+</div>
+
+<div class=" d-flex justify-content-center">
+  <a href="/create-book" class="btn btn-primary btn-lg btn-block mt-2">Crear Libro</a>
+</div>
+
+{{#if hasBooks}}
+<div class="cards-wrapper ">
+ 
+  <div class="row row-cols-4">
+
+    {{#each books as |pk|}}
+    <div class="card zoom" style="width: 18rem;background-color: #C7DBD2">
+      <h4 class="card-title mt-2" align="center"> {{pk.title}}</h4>
+      <img class="card-img-top " src={{pk.img}} alt="Card image cap">
+      <div class="card-body">
+        <strong>Año: </strong> {{pk.publicationYear}}
+        <br />
+        <strong>Autor: </strong> {{pk.Author.name}}
+        <br />
+        <strong>Categoria: </strong> {{pk.Category.name}}
+        <br />
+        <strong>Editorial: </strong> {{pk.Editorial.name}}
+        <div class="row row-cols-2 ">
+          <a href="/edit-book/{{pk.Id}}?edit=true" class="btn btn-success">
+            <i class="fa-solid fa-edit"></i> Editar
+          </a>
+
+          <form class="form-inline" action="/confirm-delete-book" method="post">
+            <input type="hidden" name="bookId" value="{{pk.Id}}" />
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+
+{{else}}
+<h3 class="text-center mt-4">No hay libros creados</h3>
+
+{{/if}}

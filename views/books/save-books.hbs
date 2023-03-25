@@ -1,0 +1,104 @@
+<div class="row">
+
+    {{#if hasCategory}}
+     {{#if hasEditorial}}
+     {{#if hasAuthor}}
+
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+    <div class="card">
+      <div class="card-header bg-dark text-white ">
+        {{#if editMode}}Edicion{{else}}Creacion{{/if}} de Libros
+      </div>
+      <div class="card-body " style="background-color: #C7DBD2">
+
+        <form  enctype="multipart/form-data" id="bookForm" method="POST" action="{{#if editMode}}/edit-book{{else}}/create-book{{/if}}">
+          <div class="mb-3">
+            <label for="title" class="form-label" >Titulo</label>
+            <input required type="text" class="form-control" id="title" name="title" value="{{#if editMode}}{{book.title}}{{/if}}" />
+          </div>       
+           <div class="mb-3">
+            <label for="img" class="form-label" >Portada</label>
+            <input type="file" class="form-control" id="img" name="img" {{#if editMode}}{{else}}required{{/if}} /> 
+          </div>  
+          <div class="mb-3">
+            <label for="publicationYear" class="form-label" >Año Publicacion</label>
+            <input required type="number" class="form-control" id="publicationYear" name="publicationYear" value="{{#if editMode}}{{book.publicationYear}}{{/if}}" />
+          </div>  
+
+           <div class="mb-3">
+            <label for="author" class="form-label">Author: </label>
+            <select class="form-select" id="author" name="AuthorId" required>
+              <option {{#if editMode}}{{else}}selected{{/if}}>Seleccione una opcion</option>
+              {{#each Author as |aut|}}
+                  {{#if (equalValue aut.Id ../book.AuthorId )}}
+                  <option selected value="{{aut.Id}}">{{aut.name}}</option>
+                  {{else}}
+                  <option value="{{aut.Id}}">{{aut.name}}</option>
+                  {{/if}}                 
+               {{/each}}              
+            </select>
+          </div> 
+          
+          <div class="mb-3">
+            <label for="cate" class="form-label">Categoria: </label>
+            <select class="form-select" id="cate" name="CategoryId" required>
+              <option {{#if editMode}}{{else}}selected{{/if}}>Seleccione una opcion</option>
+              {{#each Category as |categ|}}
+                  {{#if (equalValue categ.Id ../book.CategoryId )}}
+                  <option selected value="{{categ.Id}}">{{categ.name}}</option>
+                  {{else}}
+                  <option value="{{categ.Id}}">{{categ.name}}</option>
+                  {{/if}}                 
+               {{/each}}              
+            </select>
+          </div> 
+
+          <div class="mb-3">
+            <label for="editorial" class="form-label">Editorial: </label>
+            <select class="form-select" id="editorial" name="EditorialId" required>
+              <option {{#if editMode}}{{else}}selected{{/if}}>Seleccione una opcion</option>
+              {{#each Editorial as |edit|}}
+                  {{#if (equalValue edit.Id ../book.EditorialId )}}
+                  <option selected value="{{edit.Id}}">{{edit.name}}</option>
+                  {{else}}
+                  <option value="{{edit.Id}}">{{edit.name}}</option>
+                  {{/if}}                 
+               {{/each}}              
+            </select>
+          </div> 
+
+          {{#if editMode}}
+          <input type="hidden" name="bookId" value="{{book.Id}}">          
+          {{/if}}
+
+          <button type="submit" id="btnbook" class="btn btn-primary">{{#if editMode}}Editar{{else}}Crear{{/if}}</button>
+           <a href="/book" type="button" class="btn btn-warning">volver atras</a>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-6"></div>
+  {{else}}
+
+        <h2 class="text-center mt-4">No hay authores creados</h2>
+        
+
+      {{/if}}
+
+{{else}}
+
+        <h2 class="text-center mt-4">No hay editoriales creados</h2>
+        
+
+      {{/if}}
+
+{{else}}
+
+        <h2 class="text-center mt-4">No hay categorias creadas</h2>
+
+      {{/if}}
+</div>

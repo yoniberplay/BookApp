@@ -1,0 +1,76 @@
+<div class="container" align="center" style="background-color: #C7DBD2">
+    <a class="nav-link " href="/">
+        <h1 class="text-success">BookApp</h1>
+    </a>
+</div>
+
+<div class="row">
+    <div class="row w-75">
+        {{#if hasBooks}}
+        <div class="cards-wrapper">
+            <div class="row row-cols-3 album">
+                {{#each books as |pk|}}
+
+                <a href="detail-book/{{pk.Id}}" class="container text-reset text-decoration-none">
+                    <div class="card zoom " style="width: 18rem; background-color: #C7DBD2 ">
+                        <h4 class="card-title mt-2" align="center"> {{pk.title}}</h4>
+                        <img class="card-img-top " src={{pk.img}} alt="Card image cap">
+                        <div class="card-body">
+                            {{!-- <p class="card-text"> {{pk.description}}
+                                <br /> --}}
+                                <strong>Año: </strong> {{pk.publicationYear}}
+                                <br />
+                                <strong>Autor: </strong> {{pk.Author.name}}
+                                <br />
+                                <strong>Categoria: </strong> {{pk.Category.name}}
+                                <br />
+                                <strong>Editorial: </strong> {{pk.Editorial.name}}
+                        </div>
+                    </div>
+                </a>
+
+                {{/each}}
+            </div>
+        </div>
+        {{else}}
+
+        <h3 class="text-center mt-4">No se han encontrado libros</h3>
+
+        {{/if}}
+    </div>
+
+    <div class="w-25">
+
+        <div class="mt-3">
+            <form method="post" action="/findbyname">
+                <input class="form-control " type="search" min="1" name="title" placeholder="Busqueda por titulo"
+                    required="required" />
+                <button type="submit" class="btn btn-success mt-2 mb-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>Buscar</button>
+            </form>
+        </div>
+        {{#if Category}}
+        <div class="">
+            <form method="post" action="/bycategoria" id="filtroRegionesForm">
+                <h5 class="text-success text-center">Filtrar por categoria</h5>
+                {{#each Category as |tip|}}
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="{{tip.name}}" value="{{tip.Id}}" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    {{tip.name}}
+                </label>
+                </div>
+                {{!-- <a href="byregion/{{tip.Id}}" class="list-group-item list-group-item-action ">{{tip.name}}</a>
+                --}}
+                {{/each}}
+                <button type="submit" id="btnfiltrocategoria" class="btn btn-success mt-2 mb-2">Filtrar</button>
+            </form>
+        </div>
+        {{else}}
+
+        <h5 class="text-center mt-4">No se hay categorías creadas</h5>
+        {{/if}}
+    </div>
+
+</div>
+<br /><br />

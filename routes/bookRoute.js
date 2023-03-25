@@ -9,10 +9,11 @@ router.get("/book",BookController.GetBooksList);
 router.get("/create-book", BookController.GetCreateBook);
 router.post("/create-book", BookController.PostCreateBooks);
 router.get("/edit-book/:bookId", BookController.GetEditBooks);
+router.get("/detail-book/:bookId", BookController.GetDetailBooks);
 router.post("/edit-book", BookController.PostEditBooks);
 router.post("/delete-book", BookController.PostDeleteBooks);
 router.post("/confirm-delete-book", BookController.PostConfirmDeleteBooks);
-// router.get("/byregion/:regionId", BookController.GetPokemonbyregion);
-// router.post("/findbyname", BookController.PostPokemonbyName);
+router.post("/findbyname", BookController.PostBookbyName);
+router.post("/bycategoria", BookController.Postfiltroporcategoria);
 
 module.exports = router;

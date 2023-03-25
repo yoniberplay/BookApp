@@ -1,10 +1,21 @@
 const Category = require("../models/Category");
+const Books = require("../models/Book");
 
 exports.GetCategoryList = (req, res, next) => {
-  Category.findAll()
+  
+  Books.findAll()
+  .then((result) => {
+    const libros =  result.map((result) => result.dataValues);
+    Category.findAll()
     .then((result) => {
-      const categories = result.map((result) => result.dataValues);
-
+      let categories = result.map((result) => result.dataValues);
+      categories = categories.map((result) => {
+        let temp = {...result};
+        temp.quantityBooks = libros.filter((result) => {
+          return result.CategoryId == temp.Id;
+        }).length;
+        return temp;
+      });
       res.render("category/category-list", {
         pageTitle: "Category",
         categoryActive: true,
@@ -12,6 +23,7 @@ exports.GetCategoryList = (req, res, next) => {
         hasCategories: categories.length > 0,
       });
     })
+  })
     .catch((err) => {
         res.render("Error/ErrorInterno", {
             pageTitle: "Error Interno",
@@ -76,7 +88,7 @@ exports.GetEditCategory = (req, res, next) => {
 };
 
 exports.PostEditCategory = (req, res, next) => {
-  const name = req.body.mame;
+  const name = req.body.name;
   const description = req.body.description;
   const categoryId = req.body.categoryId;
 
