@@ -19,7 +19,7 @@ const Category = connection.define("Category", {
     },
     quantityBooks: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 });
 

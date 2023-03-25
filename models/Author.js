@@ -19,7 +19,7 @@ const Author = connection.define("Author", {
     },
     quantityBooks: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 });
 

@@ -1,0 +1,42 @@
+<div class="row">
+
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        {{#if editMode}}Edicion{{else}}Creacion{{/if}} de editoriales
+      </div>
+      <div class="card-body" style="background-color: #C7DBD2">
+
+        <form method="POST" action="{{#if editMode}}/edit-editorial{{else}}/create-editorial{{/if}}">
+          <div class="mb-3">
+            <label for="name" class="form-label" >Nombre</label>
+            <input required type="text" class="form-control" id="name" name="name" value="{{#if editMode}}{{editorial.name}}{{/if}}" />
+          </div>       
+           <div class="mb-3">
+            <label for="telefono" class="form-label" >Telefono</label>
+            <input required type="text" class="form-control" id="telefono" name="telefono" value="{{#if editMode}}{{editorial.telefono}}{{/if}}" />
+          </div>   
+          <div class="mb-3">
+            <label for="telefono" class="form-label" >Pais</label>
+            <input required type="text" class="form-control" id="pais" name="pais" value="{{#if editMode}}{{editorial.pais}}{{/if}}" />
+          </div>   
+
+          {{#if editMode}}
+
+          <input type="hidden" name="editorialId" value="{{editorial.Id}}">
+          
+          {{/if}}
+
+          <button type="submit" class="btn btn-primary">{{#if editMode}}Editar{{else}}Crear{{/if}}</button>
+           <a href="/editorial" type="button" class="btn btn-warning">volver atras</a>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-6"></div>
+
+</div>

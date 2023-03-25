@@ -21,6 +21,10 @@ const Editorial = connection.define("Editorial", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    quantityBooks: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
 });
 
 module.exports = Editorial;
